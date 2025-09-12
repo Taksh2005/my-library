@@ -63,7 +63,7 @@ export async function loginUser(data: { username: string; password: string }) {
 export async function logoutUser() {
   const cookieStore = await cookies()
   cookieStore.delete("token")
-  return { success: true }
+  return;
 }
 type JwtPayload = {
   id: number

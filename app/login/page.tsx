@@ -15,7 +15,7 @@ export default function LoginPage() {
     if (res.success) {
       router.push("/dashboard")
     } else {
-      setError(res.message)
+      setError(error)
     }
   }
 

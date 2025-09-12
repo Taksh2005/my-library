@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 type Profile = {
   firstname: string;
   lastname: string;
-  email: string;
+  email: string | null;
   username: string;
 };
 
@@ -142,7 +142,7 @@ export default function EditProfileForm({ profile }: { profile: Profile }) {
         <input
           type="email"
           placeholder="Email"
-          value={formData.email}
+          value={formData.email || ""}
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           className="border p-2 rounded w-full"
         />
