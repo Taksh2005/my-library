@@ -1,0 +1,108 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  user_id   Int     @id @default(autoincrement())
+  username  String  @unique
+  email     String? @unique
+  password  String
+  firstname String
+  lastname  String
+  role      String  @default("USER")
+
+  BookRequest BookRequest[]
+  borrow      Bookissuancedetail[]
+  Bookmark    Bookmark[]
+}
+
+model Usertype {
+  id           Int    @id @default(autoincrement())
+  borrowertype String
+}
+
+model Book {
+  book_id        Int                @id @default(autoincrement())
+  book_title     String
+  category_id    Int
+  author         String
+  book_copies    Int
+  book_pub       String
+  publisher_name String
+  ISBN           String             @unique
+  copyright_year Int
+  date_receiver  DateTime
+  date_added     DateTime           @default(now())
+  status         String
+
+  category       Category           @relation(fields: [category_id], references: [category_id])
+  BookRequest    BookRequest[]
+  Bookmark       Bookmark[]
+  returns        Bookreturndetail[]
+
+  @@index([category_id], map: "Book_category_id_fkey")
+}
+
+model Category {
+  category_id Int    @id @default(autoincrement())
+  classname   String
+  books       Book[]
+}
+
+model Bookissuancedetail {
+  borrow_id   Int      @id @default(autoincrement())
+  user_id     Int
+  date_borrow DateTime
+  due_date    DateTime
+
+  user    User               @relation(fields: [user_id], references: [user_id])
+  returns Bookreturndetail[]
+
+  @@index([user_id], map: "Bookissuancedetail_user_id_fkey")
+}
+
+model Bookreturndetail {
+  borrow_detail_id Int                @id @default(autoincrement())
+  book_id          Int
+  borrow_id        Int
+  borrow_status    String
+  date_return      DateTime
+
+  book   Book               @relation(fields: [book_id], references: [book_id])
+  borrow Bookissuancedetail @relation(fields: [borrow_id], references: [borrow_id])
+
+  @@index([book_id], map: "Bookreturndetail_book_id_fkey")
+  @@index([borrow_id], map: "Bookreturndetail_borrow_id_fkey")
+}
+
+model BookRequest {
+  request_id Int      @id @default(autoincrement())
+  user_id    Int
+  book_id    Int
+  status     String   @default("PENDING")
+  createdAt  DateTime @default(now())
+
+  book Book @relation(fields: [book_id], references: [book_id])
+  user User @relation(fields: [user_id], references: [user_id])
+
+  @@index([book_id], map: "BookRequest_book_id_fkey")
+  @@index([user_id], map: "BookRequest_user_id_fkey")
+}
+
+model Bookmark {
+  bookmark_id Int      @id @default(autoincrement())
+  user_id     Int
+  book_id     Int
+  createdAt   DateTime @default(now())
+
+  book Book @relation(fields: [book_id], references: [book_id])
+  user User @relation(fields: [user_id], references: [user_id])
+
+  @@index([book_id], map: "Bookmark_book_id_fkey")
+  @@index([user_id], map: "Bookmark_user_id_fkey")
+}
