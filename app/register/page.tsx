@@ -37,7 +37,7 @@ export default function RegisterPage() {
       if (res.success) {
         router.push("/dashboard")
       } else {
-        setError(res.message || "Registration failed. Please try again.")
+        setError("Registration failed. Please try again.")
       }
     } catch {
       setError("Unable to connect to the server. Please try again.")
@@ -50,8 +50,6 @@ export default function RegisterPage() {
     <main className="min-h-screen bg-gray-50 px-4 py-10 dark:bg-gray-950 sm:px-6">
       <div className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-md items-center justify-center">
         <div className="w-full">
-
-          {/* Header */}
           <div className="mb-8 text-center">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 shadow-sm">
               <svg
@@ -78,10 +76,7 @@ export default function RegisterPage() {
             </p>
           </div>
 
-          {/* Card */}
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-8">
-
-            {/* Error */}
             {error && (
               <div className="mb-5 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400">
                 <svg
@@ -102,8 +97,6 @@ export default function RegisterPage() {
             )}
 
             <form onSubmit={handleRegister} className="space-y-4">
-
-              {/* Name */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label
@@ -146,7 +139,6 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              {/* Username */}
               <div>
                 <label
                   htmlFor="username"
@@ -185,7 +177,6 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              {/* Email */}
               <div>
                 <label
                   htmlFor="email"
@@ -224,7 +215,6 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              {/* Password */}
               <div>
                 <label
                   htmlFor="password"
@@ -263,7 +253,6 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              {/* Submit */}
               <button
                 type="submit"
                 disabled={loading}
@@ -313,7 +302,6 @@ export default function RegisterPage() {
               </button>
             </form>
 
-            {/* Login link */}
             <div className="mt-6 border-t border-gray-200 pt-6 text-center dark:border-gray-800">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Already have an account?{" "}
@@ -327,7 +315,6 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Footer */}
           <p className="mt-6 text-center text-xs text-gray-400 dark:text-gray-600">
             Library Management System
           </p>
