@@ -9,17 +9,55 @@ import {
   getCategories,
 } from "@/app/actions/resourceActions"
 
+type Category = {
+  category_id: number
+  classname: string
+}
+
+type Book = {
+  book_id: number
+  book_title: string
+  author: string
+  publisher_name: string
+  ISBN: string
+  copyright_year: number
+  category_id: number
+  book_copies: number
+  status: string
+  book_pub: string
+  date_receiver: string | Date
+  category?: Category | null
+}
+
+type BookFormData = {
+  book_title: string
+  author: string
+  publisher_name: string
+  ISBN: string
+  copyright_year: number
+  category_id: number | null
+  status: string
+  book_copies: number
+  book_pub: string
+  date_receiver: string
+}
+
 export default function ManageResourcesPage() {
-  const [books, setBooks] = useState<any[]>([])
-  const [categories, setCategories] = useState<any[]>([])
+  const [books, setBooks] = useState<Book[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
-  const [editingBook, setEditingBook] = useState<any | null>(null)
+  const [editingBook, setEditingBook] = useState<Book | null>(null)
 
   useEffect(() => {
     async function loadData() {
       setLoading(true)
-      const [b, c] = await Promise.all([getBooks(), getCategories()])
+
+      const [b, c] = await Promise.all([
+        getBooks(),
+        getCategories(),
+      ])
+
       setBooks(b)
       setCategories(c)
       setLoading(false)
@@ -38,7 +76,7 @@ export default function ManageResourcesPage() {
     setShowForm(true)
   }
 
-  function openEditForm(book: any) {
+  function openEditForm(book: Book) {
     setEditingBook(book)
     setShowForm(true)
   }
@@ -150,7 +188,7 @@ export default function ManageResourcesPage() {
                     strokeWidth={1.8}
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    d="M4 19.5V6.75A2.75 2.75 0 0 1 6.75 4H20v15.5H6.75A2.75 2.75 0 0 0 4 22m0-2.5A2.5 2.5 0 0 1 6.5 17.5H20"
+                    d="M4 19.5V6.75A2.75 2.75 0 0 1 6.75 4H20v15.5H6.75A1.75 1.75 0 0 0 5 21.25"
                   />
                 </svg>
               </div>
@@ -380,23 +418,39 @@ function BookForm({
   categories,
 }: {
   onClose: () => void
-  onSave: (book: any) => void
-  editingBook: any | null
-  categories: any[]
+  onSave: (book: Book) => void
+  editingBook: Book | null
+  categories: Category[]
 }) {
-  const [form, setForm] = useState(
-    editingBook || {
-      book_title: "",
-      author: "",
-      publisher_name: "",
-      ISBN: "",
-      copyright_year: new Date().getFullYear(),
-      category_id: categories[0]?.category_id || null,
-      status: "Available",
-      book_copies: 1,
-      book_pub: "",
-      date_receiver: new Date().toISOString(),
-    }
+  const [form, setForm] = useState<BookFormData>(
+    editingBook
+      ? {
+          book_title: editingBook.book_title,
+          author: editingBook.author,
+          publisher_name: editingBook.publisher_name,
+          ISBN: editingBook.ISBN,
+          copyright_year: editingBook.copyright_year,
+          category_id: editingBook.category_id,
+          status: editingBook.status,
+          book_copies: editingBook.book_copies,
+          book_pub: editingBook.book_pub,
+          date_receiver:
+            editingBook.date_receiver instanceof Date
+              ? editingBook.date_receiver.toISOString()
+              : editingBook.date_receiver,
+        }
+      : {
+          book_title: "",
+          author: "",
+          publisher_name: "",
+          ISBN: "",
+          copyright_year: new Date().getFullYear(),
+          category_id: categories[0]?.category_id ?? null,
+          status: "Available",
+          book_copies: 1,
+          book_pub: "",
+          date_receiver: new Date().toISOString(),
+        }
   )
 
   const [saving, setSaving] = useState(false)
@@ -406,22 +460,19 @@ function BookForm({
     setSaving(true)
 
     try {
-      let saved
+      let saved: Book
+
+      const bookData = {
+        ...form,
+        book_copies: Number(form.book_copies),
+        copyright_year: Number(form.copyright_year),
+        category_id: Number(form.category_id),
+      }
 
       if (editingBook) {
-        saved = await updateBook(editingBook.book_id, {
-          ...form,
-          book_copies: Number(form.book_copies),
-          copyright_year: Number(form.copyright_year),
-          category_id: Number(form.category_id),
-        })
+        saved = await updateBook(editingBook.book_id, bookData)
       } else {
-        saved = await addBook({
-          ...form,
-          book_copies: Number(form.book_copies),
-          copyright_year: Number(form.copyright_year),
-          category_id: Number(form.category_id),
-        })
+        saved = await addBook(bookData)
       }
 
       onSave(saved)

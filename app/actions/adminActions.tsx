@@ -46,11 +46,11 @@ export async function getActiveBorrows() {
   })
 
   return borrows
-    .filter((b) => b.returns.length === 0)
-    .map((b) => ({
-      ...b,
-      book: b.user.BookRequest[0]?.book ?? null,
-    }))
+  .filter((b: typeof borrows[number]) => b.returns.length === 0)
+  .map((b: typeof borrows[number]) => ({
+    ...b,
+    book: b.user.BookRequest[0]?.book ?? null,
+  }))
 }
 export async function markBookReturned(borrowId: number, bookId: number) {
   await prisma.bookreturndetail.create({

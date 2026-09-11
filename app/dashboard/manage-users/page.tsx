@@ -8,11 +8,29 @@ import {
   deleteUser,
 } from "@/app/actions/userActions"
 
+type User = {
+  user_id: number
+  username: string
+  email: string | null
+  firstname: string
+  lastname: string
+  role: string
+}
+
+type UserFormData = {
+  username: string
+  email: string
+  password: string
+  firstname: string
+  lastname: string
+  role: string
+}
+
 export default function ManageUsersPage() {
-  const [users, setUsers] = useState<any[]>([])
+  const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
-  const [editingUser, setEditingUser] = useState<any | null>(null)
+  const [editingUser, setEditingUser] = useState<User | null>(null)
 
   useEffect(() => {
     async function loadUsers() {
@@ -27,7 +45,7 @@ export default function ManageUsersPage() {
 
   async function handleDelete(id: number) {
     await deleteUser(id)
-    setUsers(users.filter((u) => u.user_id !== id))
+    setUsers(users.filter((user) => user.user_id !== id))
   }
 
   function openAddForm() {
@@ -35,7 +53,7 @@ export default function ManageUsersPage() {
     setShowForm(true)
   }
 
-  function openEditForm(user: any) {
+  function openEditForm(user: User) {
     setEditingUser(user)
     setShowForm(true)
   }
@@ -328,8 +346,8 @@ export default function ManageUsersPage() {
           onSave={(newUser) => {
             if (editingUser) {
               setUsers(
-                users.map((u) =>
-                  u.user_id === newUser.user_id ? newUser : u
+                users.map((user) =>
+                  user.user_id === newUser.user_id ? newUser : user
                 )
               )
             } else {
@@ -351,18 +369,27 @@ function UserForm({
   editingUser,
 }: {
   onClose: () => void
-  onSave: (user: any) => void
-  editingUser: any | null
+  onSave: (user: User) => void
+  editingUser: User | null
 }) {
-  const [form, setForm] = useState(
-    editingUser || {
-      username: "",
-      email: "",
-      password: "",
-      firstname: "",
-      lastname: "",
-      role: "USER",
-    }
+  const [form, setForm] = useState<UserFormData>(
+    editingUser
+      ? {
+          username: editingUser.username,
+          email: editingUser.email || "",
+          password: "",
+          firstname: editingUser.firstname,
+          lastname: editingUser.lastname,
+          role: editingUser.role,
+        }
+      : {
+          username: "",
+          email: "",
+          password: "",
+          firstname: "",
+          lastname: "",
+          role: "USER",
+        }
   )
 
   const [saving, setSaving] = useState(false)
@@ -372,7 +399,7 @@ function UserForm({
     setSaving(true)
 
     try {
-      let saved
+      let saved: User
 
       if (editingUser) {
         saved = await updateUser(editingUser.user_id, form)
@@ -499,7 +526,7 @@ function UserForm({
                 </label>
                 <input
                   type="email"
-                  value={form.email || ""}
+                  value={form.email}
                   onChange={(e) =>
                     setForm({ ...form, email: e.target.value })
                   }

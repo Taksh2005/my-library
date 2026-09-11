@@ -1,4 +1,5 @@
 // app/page.tsx
+import Link from "next/link"
 import { getBooks } from "./actions/bookActions"
 import ResourceCard from "@/app/components/ResourceCard"
 
@@ -15,13 +16,18 @@ export default async function Home({
   const params = await searchParams
 
   const books = await getBooks({
-    search: params.search,
-    sortBy: params.sortBy as string,
-    order: (params.order as "asc" | "desc") || "asc",
-    categoryId: params.categoryId
-      ? parseInt(params.categoryId)
-      : undefined,
-  })
+  search: params.search,
+  sortBy: params.sortBy as
+    | "date_added"
+    | "book_title"
+    | "publisher_name"
+    | "copyright_year"
+    | undefined,
+  order: (params.order as "asc" | "desc") || "asc",
+  categoryId: params.categoryId
+    ? parseInt(params.categoryId)
+    : undefined,
+})
 
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-950 px-4 py-8 sm:px-6 lg:px-8">
@@ -139,7 +145,7 @@ export default async function Home({
               <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 Showing results for{" "}
                 <span className="font-medium text-gray-700 dark:text-gray-300">
-                  "{params.search}"
+                  &ldquo;{params.search}&rdquo;
                 </span>
               </p>
             ) : (
@@ -157,7 +163,7 @@ export default async function Home({
         {/* Books */}
         {books.length > 0 ? (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-  {books.map((book) => (
+  {books.map((book: (typeof books)[number]) => (
     <ResourceCard key={book.book_id} book={book} />
   ))}
 </div>
@@ -190,12 +196,12 @@ export default async function Home({
             </p>
 
             {params.search && (
-              <a
+              <Link
                 href="/"
                 className="mt-5 inline-flex items-center rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
               >
                 Clear search
-              </a>
+              </Link>
             )}
           </div>
         )}

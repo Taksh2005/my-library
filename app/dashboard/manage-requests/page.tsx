@@ -10,9 +10,17 @@ async function approveOrReject(id: number, status: "APPROVED" | "REJECTED") {
 export default async function ManageRequestsPage() {
   const requests = await getAllBookRequests()
 
-  const pendingCount = requests.filter((req) => req.status === "PENDING").length
-  const approvedCount = requests.filter((req) => req.status === "APPROVED").length
-  const rejectedCount = requests.filter((req) => req.status === "REJECTED").length
+  const pendingCount = requests.filter(
+  (req: (typeof requests)[number]) => req.status === "PENDING"
+).length
+
+const approvedCount = requests.filter(
+  (req: (typeof requests)[number]) => req.status === "APPROVED"
+).length
+
+const rejectedCount = requests.filter(
+  (req: (typeof requests)[number]) => req.status === "REJECTED"
+).length
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8 dark:bg-gray-950 sm:px-6 lg:px-8">
@@ -181,7 +189,7 @@ export default async function ManageRequestsPage() {
                 </thead>
 
                 <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                  {requests.map((req) => (
+                  {requests.map((req: (typeof requests)[number]) => (
                     <tr
                       key={req.request_id}
                       className="transition hover:bg-gray-50/80 dark:hover:bg-gray-800/40"

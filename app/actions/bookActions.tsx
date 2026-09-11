@@ -1,47 +1,69 @@
-// app/actions/bookActions.tsx
-'use server'
+"use server"
 
-import {prisma} from "@/lib/prisma";
+import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "./authActions"
-import { redirect } from "next/navigation";
+import { redirect } from "next/navigation"
+
+type BookSearchParams = {
+  search?: string
+  sortBy?:
+    | "date_added"
+    | "book_title"
+    | "publisher_name"
+    | "copyright_year"
+  order?: "asc" | "desc"
+  categoryId?: number
+}
 
 export async function getBooks({
   search,
   sortBy,
   order,
   categoryId,
-}: {
-  search?: string;
-  sortBy?: string;
-  order?: "asc" | "desc";
-  categoryId?: number;
-}) {
-  const conditions: any[] = [];
+}: BookSearchParams) {
+  const conditions = []
 
   if (search) {
     conditions.push({
       OR: [
-        { book_title: { contains: search } },  // removed mode
+        { book_title: { contains: search } },
         { publisher_name: { contains: search } },
         { ISBN: { contains: search } },
       ],
-    });
+    })
   }
 
   if (categoryId) {
-    conditions.push({ category_id: categoryId });
+    conditions.push({
+      category_id: categoryId,
+    })
   }
 
-  return prisma.book.findMany({
-    where: conditions.length > 0 ? { AND: conditions } : undefined,
-    orderBy: sortBy ? { [sortBy]: order } : { date_added: "desc" },
-  });
-}
+  const orderBy = sortBy
+    ? {
+        [sortBy]: order ?? "asc",
+      }
+    : {
+        date_added: "desc" as const,
+      }
 
+  return prisma.book.findMany({
+    where:
+      conditions.length > 0
+        ? {
+            AND: conditions,
+          }
+        : undefined,
+    orderBy,
+  })
+}
 
 export async function requestBook(bookId: number) {
   const user = await getCurrentUser()
-  if (!user) redirect('/login')
+
+  if (!user) {
+    redirect("/login")
+  }
 
   return prisma.bookRequest.create({
     data: {
@@ -53,7 +75,10 @@ export async function requestBook(bookId: number) {
 
 export async function bookmarkBook(bookId: number) {
   const user = await getCurrentUser()
-  if (!user) redirect('/login')
+
+  if (!user) {
+    redirect("/login")
+  }
 
   return prisma.bookmark.create({
     data: {
@@ -74,26 +99,10 @@ export async function searchBooks(query: string) {
     const books = await prisma.book.findMany({
       where: {
         OR: [
-          {
-            book_title: {
-              contains: search,
-            },
-          },
-          {
-            author: {
-              contains: search,
-            },
-          },
-          {
-            publisher_name: {
-              contains: search,
-            },
-          },
-          {
-            ISBN: {
-              contains: search,
-            },
-          },
+          { book_title: { contains: search } },
+          { author: { contains: search } },
+          { publisher_name: { contains: search } },
+          { ISBN: { contains: search } },
         ],
       },
       select: {

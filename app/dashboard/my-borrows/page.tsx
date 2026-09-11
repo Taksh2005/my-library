@@ -51,7 +51,7 @@ export default async function MyBorrowsPage() {
 
   const today = new Date()
 
-  const borrowData = borrows.map((borrow) => {
+  const borrowData = borrows.map((borrow: (typeof borrows)[number]) => {
     const dueDate = new Date(borrow.due_date)
 
     const overdueDays =
@@ -72,13 +72,14 @@ export default async function MyBorrowsPage() {
   })
 
   const overdueCount = borrowData.filter(
-    (borrow) => borrow.overdueDays > 0
-  ).length
+  (borrow: (typeof borrowData)[number]) => borrow.overdueDays > 0
+).length
 
   const totalFine = borrowData.reduce(
-    (total, borrow) => total + borrow.fine,
-    0
-  )
+  (total: number, borrow: (typeof borrowData)[number]) =>
+    total + borrow.fine,
+  0
+)
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8 dark:bg-gray-950 sm:px-6">
@@ -260,7 +261,7 @@ export default async function MyBorrowsPage() {
                 </thead>
 
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
-                  {borrowData.map((borrow) => {
+                  {borrowData.map((borrow: (typeof borrowData)[number]) => {
                     const dueDate = new Date(borrow.due_date)
                     const isOverdue = borrow.overdueDays > 0
 

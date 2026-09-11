@@ -92,7 +92,7 @@ export default async function BorrowedBooksPage() {
                 </thead>
 
                 <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                  {borrows.map((b) => (
+                  {borrows.map((b: (typeof borrows)[number]) => (
                     <tr
                       key={b.borrow_id}
                       className="transition hover:bg-gray-50/80 dark:hover:bg-gray-800/30"
@@ -155,32 +155,41 @@ export default async function BorrowedBooksPage() {
                       </td>
 
                       <td className="px-5 py-4 text-right">
-                        <form
-                          action={async () => {
-                            "use server";
-                            await markBookReturned(b.borrow_id, b.book.book_id);
-                          }}
-                        >
-                          <button
-                            type="submit"
-                            className="inline-flex items-center gap-2 rounded-xl bg-green-600 px-3.5 py-2 text-sm font-semibold text-white transition hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500/30"
+                        {b.book ? (
+                          <form
+                            action={async () => {
+                              "use server";
+                              await markBookReturned(
+                                b.borrow_id,
+                                b.book.book_id,
+                              );
+                            }}
                           >
-                            <svg
-                              className="h-4 w-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
+                            <button
+                              type="submit"
+                              className="inline-flex items-center gap-2 rounded-xl bg-green-600 px-3.5 py-2 text-sm font-semibold text-white transition hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500/30"
                             >
-                              <path
-                                strokeWidth={1.8}
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="m5 12 4 4L19 6"
-                              />
-                            </svg>
-                            Mark Returned
-                          </button>
-                        </form>
+                              <svg
+                                className="h-4 w-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeWidth={1.8}
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="m5 12 4 4L19 6"
+                                />
+                              </svg>
+                              Mark Returned
+                            </button>
+                          </form>
+                        ) : (
+                          <span className="text-xs text-gray-400">
+                            Book unavailable
+                          </span>
+                        )}
                       </td>
                     </tr>
                   ))}

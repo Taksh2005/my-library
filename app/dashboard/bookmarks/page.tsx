@@ -75,7 +75,7 @@ export default async function MyBookmarksPage() {
                 My Bookmarks
               </h1>
               <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
-                Books you've saved for later
+                Books you&apos;ve saved for later
               </p>
             </div>
           </div>
@@ -139,7 +139,7 @@ export default async function MyBookmarksPage() {
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {bookmarks.map((bm) => (
+              {bookmarks.map((bm: (typeof bookmarks)[number]) => (
                 <Link
                   key={bm.bookmark_id}
                   href={`/book/${bm.book.book_id}`}

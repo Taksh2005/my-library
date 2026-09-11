@@ -49,16 +49,16 @@ export default async function MyRequestsPage() {
   })
 
   const pendingCount = requests.filter(
-    (request) => request.status === "PENDING"
-  ).length
+  (request: (typeof requests)[number]) => request.status === "PENDING"
+).length
 
-  const approvedCount = requests.filter(
-    (request) => request.status === "APPROVED"
-  ).length
+const approvedCount = requests.filter(
+  (request: (typeof requests)[number]) => request.status === "APPROVED"
+).length
 
-  const rejectedCount = requests.filter(
-    (request) => request.status === "REJECTED"
-  ).length
+const rejectedCount = requests.filter(
+  (request: (typeof requests)[number]) => request.status === "REJECTED"
+).length
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8 dark:bg-gray-950 sm:px-6">
@@ -202,7 +202,7 @@ export default async function MyRequestsPage() {
             </h2>
 
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              You haven't submitted any book requests.
+              You haven&apos;t submitted any book requests.
             </p>
           </div>
         ) : (
@@ -233,7 +233,7 @@ export default async function MyRequestsPage() {
                 </thead>
 
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
-                  {requests.map((request) => {
+                  {requests.map((request: (typeof requests)[number]) => {
                     const status = request.status
 
                     const statusStyles =

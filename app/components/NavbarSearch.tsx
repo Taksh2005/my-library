@@ -218,7 +218,7 @@ export default function NavbarSearch() {
                 onClick={showAllResults}
                 className="flex w-full items-center justify-center gap-2 border-t border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-blue-600 transition hover:bg-blue-50 dark:border-gray-700 dark:bg-gray-800/70 dark:text-blue-400 dark:hover:bg-gray-800"
               >
-                Show all results for "{query.trim()}"
+                Show all results for &quot;{query.trim()}&quot;
                 <svg
                   className="h-4 w-4"
                   fill="none"
