@@ -1,4 +1,5 @@
 import Navbar from "@/app/components/Navbar"
+import "./global.css"
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   // later: get user from session/cookies
