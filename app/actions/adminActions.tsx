@@ -27,14 +27,30 @@ export async function approveRequest(requestId: number) {
   })
 }
 export async function getActiveBorrows() {
-  return prisma.bookissuancedetail.findMany({
+  const borrows = await prisma.bookissuancedetail.findMany({
     include: {
-      user: true,
+      user: {
+        include: {
+          BookRequest: {
+            include: {
+              book: true,
+            },
+            orderBy: {
+              createdAt: "desc",
+            },
+          },
+        },
+      },
       returns: true,
     },
-  }).then(borrows =>
-    borrows.filter(b => b.returns.length === 0) // only active
-  )
+  })
+
+  return borrows
+    .filter((b) => b.returns.length === 0)
+    .map((b) => ({
+      ...b,
+      book: b.user.BookRequest[0]?.book ?? null,
+    }))
 }
 export async function markBookReturned(borrowId: number, bookId: number) {
   await prisma.bookreturndetail.create({

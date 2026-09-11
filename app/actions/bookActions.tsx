@@ -1,4 +1,6 @@
 // app/actions/bookActions.tsx
+'use server'
+
 import {prisma} from "@/lib/prisma";
 import { getCurrentUser } from "./authActions"
 import { redirect } from "next/navigation";
@@ -59,4 +61,58 @@ export async function bookmarkBook(bookId: number) {
       book_id: bookId,
     },
   })
+}
+
+export async function searchBooks(query: string) {
+  try {
+    const search = query.trim()
+
+    if (!search) {
+      return []
+    }
+
+    const books = await prisma.book.findMany({
+      where: {
+        OR: [
+          {
+            book_title: {
+              contains: search,
+            },
+          },
+          {
+            author: {
+              contains: search,
+            },
+          },
+          {
+            publisher_name: {
+              contains: search,
+            },
+          },
+          {
+            ISBN: {
+              contains: search,
+            },
+          },
+        ],
+      },
+      select: {
+        book_id: true,
+        book_title: true,
+        author: true,
+        publisher_name: true,
+        ISBN: true,
+        copyright_year: true,
+      },
+      orderBy: {
+        book_title: "asc",
+      },
+      take: 5,
+    })
+
+    return books
+  } catch (error) {
+    console.error("Navbar book search failed:", error)
+    return []
+  }
 }
